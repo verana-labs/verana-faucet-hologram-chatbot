@@ -17,7 +17,7 @@ import io.twentysixty.sa.client.model.message.BaseMessage;
 import io.twentysixty.sa.res.c.MessageResource;
 
 @ApplicationScoped
-public class MtConsumer extends AbstractConsumer implements ConsumerInterface {
+public class MtConsumer extends AbstractConsumer<BaseMessage> implements ConsumerInterface<BaseMessage> {
 
 	@RestClient
 	@Inject

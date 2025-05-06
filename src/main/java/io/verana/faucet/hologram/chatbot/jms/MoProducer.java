@@ -17,7 +17,7 @@ import io.twentysixty.sa.client.model.message.BaseMessage;
 
 
 @ApplicationScoped
-public class MoProducer extends AbstractProducer implements ProducerInterface {
+public class MoProducer extends AbstractProducer<BaseMessage> implements ProducerInterface<BaseMessage> {
 
 	@Inject
     ConnectionFactory _connectionFactory;

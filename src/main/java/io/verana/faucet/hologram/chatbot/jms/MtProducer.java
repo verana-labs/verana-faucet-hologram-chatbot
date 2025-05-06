@@ -12,12 +12,13 @@ import org.jboss.logging.Logger;
 import io.quarkus.runtime.ShutdownEvent;
 import io.quarkus.runtime.StartupEvent;
 import io.twentysixty.sa.client.jms.AbstractProducer;
+import io.twentysixty.sa.client.jms.ProducerInterface;
 import io.twentysixty.sa.client.model.message.BaseMessage;
 import io.twentysixty.sa.client.util.JsonUtil;
 
 
 @ApplicationScoped
-public class MtProducer extends AbstractProducer {
+public class MtProducer extends AbstractProducer<BaseMessage> implements ProducerInterface<BaseMessage> {
 
 	@Inject
     ConnectionFactory _connectionFactory;
