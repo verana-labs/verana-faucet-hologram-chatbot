@@ -1,0 +1,36 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: verana-faucet-hologram-chatbot-public
+  namespace: didcomm-chatbots
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+spec:
+  ingressClassName: nginx
+  tls:
+    - hosts:
+        - faucet-vs.testnet.verana.network
+        - q.faucet-vs.testnet.verana.network
+      secretName: public.faucet-vs.testnet.verana.network-cert
+  rules:
+    - host: faucet-vs.testnet.verana.network
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                 name: verana-faucet-hologram-chatbot
+                 port:
+                   number: 3001
+    - host: q.faucet-vs.testnet.verana.network
+      http:
+        paths:
+          - path: /avatar.png
+            pathType: Prefix
+            backend:
+              service:
+                 name: verana-faucet-hologram-chatbot
+                 port:
+                   number: 2903
+
