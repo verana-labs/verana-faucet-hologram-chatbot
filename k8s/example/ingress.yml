@@ -9,11 +9,11 @@ spec:
   ingressClassName: nginx
   tls:
     - hosts:
-        - faucet-vs.testnet.verana.network
-        - q.faucet-vs.testnet.verana.network
-      secretName: public.faucet-vs.testnet.verana.network-cert
+        - test-faucet-vs.devnet.verana.network
+        - q.test-faucet-vs.devnet.verana.network
+      secretName: public.test-faucet-vs.devnet.verana.network-cert
   rules:
-    - host: faucet-vs.testnet.verana.network
+    - host: test-faucet-vs.devnet.verana.network
       http:
         paths:
           - path: /
@@ -23,7 +23,7 @@ spec:
                  name: verana-faucet-hologram-chatbot
                  port:
                    number: 3001
-    - host: q.faucet-vs.testnet.verana.network
+    - host: q.test-faucet-vs.devnet.verana.network
       http:
         paths:
           - path: /avatar.png
@@ -33,4 +33,3 @@ spec:
                  name: verana-faucet-hologram-chatbot
                  port:
                    number: 2903
-

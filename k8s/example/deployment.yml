@@ -24,28 +24,29 @@ spec:
            - name: verana-faucet-hologram-chatbot-data-store-main
              mountPath: /home/data
          containers:
+         containers:
          -  name: verana-faucet-hologram-chatbot-sa-container
             image: io2060/2060-service-agent:v1.1.0
             imagePullPolicy: Always
             env:
             - name: AGENT_ENDPOINT
-              value: "wss://faucet-vs.testnet.verana.network:443"
+              value: "wss://test-faucet-vs.devnet.verana.network:443"
             - name: AGENT_LABEL
               value: "Verana Testnet Faucet"
             - name: AGENT_WALLET_ID
               value: "verana-test-faucet-wallet"
             - name: AGENT_WALLET_KEY
-              value: "*******changeme*********"
+              value: "verana-test-faucet-wallet-d2iwuoge8u2"
             - name: REDIRECT_DEFAULT_URL_TO_INVITATION_URL
               value: "true"
             - name: AGENT_INVITATION_IMAGE_URL
-              value: "https://q.faucet-vs.testnet.verana.network/avatar.png"
+              value: "https://q.test-faucet-vs.devnet.verana.network/avatar.png"
             - name: EVENTS_BASE_URL
-              value: "http://localhost:2903"
+              value: "http://verana-faucet-hologram-chatbot.didcomm-chatbots:2903"
             - name: AGENT_PUBLIC_DID
-              value: "did:web:faucet-vs.testnet.verana.network"
+              value: "did:web:test-faucet-vs.devnet.verana.network"
             - name: ANONCREDS_SERVICE_BASE_URL
-              value: "https://faucet-vs.testnet.verana.network"
+              value: "https://test-faucet-vs.devnet.verana.network"
             - name: ADMIN_PORT
               value: "4000"
             volumeMounts:
@@ -55,33 +56,36 @@ spec:
             -  containerPort: 4000
             -  containerPort: 3001
          -  name: verana-faucet-hologram-chatbot-backend-container
-            image: veranalabs/verana-faucet-hologram-chatbot:v1.0
+            image: veranalabs/verana-faucet-hologram-chatbot:main
             imagePullPolicy: Always
             env:
             - name: SERVICE_AGENT_ADMIN_BASE_URL
               value: "http://localhost:4000"
             - name: PUBLIC_BASE_URL
-              value: "https://faucet-vs.testnet.verana.network"
+              value: "https://test-faucet-vs.devnet.verana.network"
             - name: PNVS_SERVICE_AGENT_ADMIN_BASE_URL
-              value: "https://a.faucet-vs.testnet.verana.network"
+              value: "https://a.test-faucet-vs.devnet.verana.network"
             - name: DEBUG
               value: "1"
             - name: QUARKUS_HTTP_PORT
               value: "2903"
             - name: QUARKUS_DATASOURCE_PASSWORD
-              value: "*******changeme*********"
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-password
+                  key: password
             - name: QUARKUS_DATASOURCE_USERNAME
               value: "verana"
             - name: IO_TWENTYSIXTY_DEMOS_AUTH_VISION_REDIRDOMAIN
-              value: "faucet-vs.testnet.verana.network"
+              value: "test-faucet-vs.devnet.verana.network"
             - name: IO_TWENTYSIXTY_SA_RES_C_MESSAGERESOURCE_MP_REST_URL
-              value: "http://localhost:4000"
+              value: "http://verana-faucet-hologram-chatbot.didcomm-chatbots:4000"
             - name: IO_TWENTYSIXTY_SA_RES_C_CREDENTIALTYPERESOURCE_MP_REST_URL
-              value: "http://localhost:4000"
+              value: "http://verana-faucet-hologram-chatbot.didcomm-chatbots:4000"
             - name: IO_VERANA_FAUCET_HOLOGRAM_CHATBOT_RES_C_MEDIARESOURCE_MP_REST_URL
-              value: "http://localhost:2904"
+              value: "http://verana-faucet-hologram-chatbot.didcomm-chatbots:2904"
             - name: IO_VERANA_FAUCET_HOLOGRAM_CHATBOT_RES_C_FAUCETRESOURCE_MP_REST_URL
-              value: "http://localhost:3000"
+              value: "http://verana-faucet-hologram-chatbot.didcomm-chatbots:3000"
             - name: QUARKUS_SWAGGER_UI_ALWAYS_INCLUDE
               value: "1"
             - name: IO_TWENTYSIXTY_DEMOS_AUTH_VISION_FACE_VERIFICATION_URL
@@ -123,7 +127,10 @@ spec:
             - name: QUARKUS_ARTEMIS_URL
               value: "tcp://artemis-broker-hdls-svc.activemq-artemis-operator:61616"
             - name: QUARKUS_ARTEMIS_PASSWORD
-              value: "*******changeme*********"
+              valueFrom:
+                secretKeyRef:
+                  name: artemis-password
+                  key: password
             ports:
             -  containerPort: 2903
          -  name: verana-faucet-hologram-chatbot-data-store-container
@@ -154,7 +161,10 @@ spec:
             imagePullPolicy: Always
             env:
             - name: POSTGRES_PASSWORD
-              value: "*******changeme*********"
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-password
+                  key: password
             - name: POSTGRES_USER
               value: "verana"
             - name: PGDATA
@@ -173,7 +183,7 @@ spec:
             - name: PORT
               value: "3000"
             - name: RPC_ENDPOINT
-              value: "https://grpc.testnet.verana.network/"
+              value: "http://node1.testnet.verana.network:26657/"
             - name: DENOM
               value: "uvna"
             - name: CHAIN_PREFIX
@@ -181,7 +191,10 @@ spec:
             - name: AMOUNT
               value: "50000"
             - name: FAUCET_MNEMONIC
-              value: "VNAMNEMONICVNA"
+              valueFrom:
+                secretKeyRef:
+                  name: faucet-mnemonic
+                  key: password
    volumeClaimTemplates: 
    - metadata:
        name: verana-faucet-hologram-chatbot-sa-pv-main

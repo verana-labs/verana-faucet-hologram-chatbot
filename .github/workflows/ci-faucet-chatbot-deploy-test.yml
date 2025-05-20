@@ -1,0 +1,42 @@
+## A basic GitHub Actions workflow for your Quarkus application.
+
+name: deploy Testnet faucet chatbot to OVH
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+    - '**'
+    - '.github/workflows/ci-faucet-chatbot-deploy-testnet.yml'
+  workflow_dispatch:
+
+env:
+  KUBECONFIG: ${{ secrets.OVH_KUBECONFIG_TESTNET }}
+  MNEMONIC: ${{ secrets.FAUCET_MNEMONIC_TESTNET }}
+  
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout gh-repo
+        uses: actions/checkout@v3
+
+      - name: Set up Kubernetes
+        uses: azure/setup-kubectl@v4.0.0
+        with:
+          version: 'v1.29.9'
+
+      - name: Deploy
+        run: |
+          echo "$KUBECONFIG" > /tmp/k8s_config
+          kubectl --kubeconfig=/tmp/k8s_config --namespace demos-main create secret generic postgres-password --from-literal=password="${{ secrets.POSTGRES_PASSWORD }}" --dry-run=client -o yaml | kubectl --kubeconfig=/tmp/k8s_config apply -f -
+          kubectl --kubeconfig=/tmp/k8s_config --namespace demos-main create secret generic artemis-password --from-literal=password="${{ secrets.ARTEMIS_PASSWORD }}" --dry-run=client -o yaml | kubectl --kubeconfig=/tmp/k8s_config apply -f -
+          kubectl --kubeconfig=/tmp/k8s_config --namespace demos-main create secret generic faucet-mnemonic --from-literal=password="${{ secrets.MNEMONIC }}" --dry-run=client -o yaml | kubectl --kubeconfig=/tmp/k8s_config apply -f -
+          kubectl --kubeconfig=/tmp/k8s_config apply -f k8s/testnet/namespace.yml
+          kubectl --kubeconfig=/tmp/k8s_config apply -f k8s/testnet/deployment.yml
+          kubectl --kubeconfig=/tmp/k8s_config patch -f k8s/testnet/deployment.yml -p "{\"spec\":{\"template\":{\"metadata\":{\"annotations\":{\"ci-last-updated\":\"$(date +'%s')\"}}}}}"
+          kubectl --kubeconfig=/tmp/k8s_config apply -f k8s/testnet/service.yml
+          kubectl --kubeconfig=/tmp/k8s_config apply -f k8s/testnet/ingress.yml
+          rm -f /tmp/k8s_config
+  
