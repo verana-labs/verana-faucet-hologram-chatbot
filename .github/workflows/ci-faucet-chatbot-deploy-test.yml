@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
 
 env:
-  KUBECONFIG: ${{ secrets.OVH_KUBECONFIG_TESTNET }}
+  KUBECONFIG: ${{ secrets.OVH_KUBECONFIG_DEVNET }}
   
 
 jobs:
