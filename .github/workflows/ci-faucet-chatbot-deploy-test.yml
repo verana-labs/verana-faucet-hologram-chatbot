@@ -27,10 +27,10 @@ jobs:
           kubectl --kubeconfig=/tmp/k8s_config --namespace didcomm-chatbots create secret generic postgres-password --from-literal=password="${{ secrets.POSTGRES_PASSWORD }}" --dry-run=client -o yaml | kubectl --kubeconfig=/tmp/k8s_config apply -f -
           kubectl --kubeconfig=/tmp/k8s_config --namespace didcomm-chatbots create secret generic artemis-password --from-literal=password="${{ secrets.ARTEMIS_PASSWORD }}" --dry-run=client -o yaml | kubectl --kubeconfig=/tmp/k8s_config apply -f -
           kubectl --kubeconfig=/tmp/k8s_config --namespace didcomm-chatbots create secret generic faucet-mnemonic --from-literal=password="${{ secrets.FAUCET_MNEMONIC }}" --dry-run=client -o yaml | kubectl --kubeconfig=/tmp/k8s_config apply -f -
-          kubectl --kubeconfig=/tmp/k8s_config apply -f k8s/testnet/namespace.yml
-          kubectl --kubeconfig=/tmp/k8s_config apply -f k8s/testnet/deployment.yml
-          kubectl --kubeconfig=/tmp/k8s_config patch -f k8s/testnet/deployment.yml -p "{\"spec\":{\"template\":{\"metadata\":{\"annotations\":{\"ci-last-updated\":\"$(date +'%s')\"}}}}}"
-          kubectl --kubeconfig=/tmp/k8s_config apply -f k8s/testnet/service.yml
-          kubectl --kubeconfig=/tmp/k8s_config apply -f k8s/testnet/ingress.yml
+          kubectl --kubeconfig=/tmp/k8s_config apply -f k8s/example/namespace.yml
+          kubectl --kubeconfig=/tmp/k8s_config apply -f k8s/example/deployment.yml
+          kubectl --kubeconfig=/tmp/k8s_config patch -f k8s/example/deployment.yml -p "{\"spec\":{\"template\":{\"metadata\":{\"annotations\":{\"ci-last-updated\":\"$(date +'%s')\"}}}}}"
+          kubectl --kubeconfig=/tmp/k8s_config apply -f k8s/example/service.yml
+          kubectl --kubeconfig=/tmp/k8s_config apply -f k8s/example/ingress.yml
           rm -f /tmp/k8s_config
   
