@@ -24,9 +24,9 @@ jobs:
       - name: Deploy
         run: |
           echo "$KUBECONFIG" > /tmp/k8s_config
-          kubectl --kubeconfig=/tmp/k8s_config --namespace demos-main create secret generic postgres-password --from-literal=password="${{ secrets.POSTGRES_PASSWORD }}" --dry-run=client -o yaml | kubectl --kubeconfig=/tmp/k8s_config apply -f -
-          kubectl --kubeconfig=/tmp/k8s_config --namespace demos-main create secret generic artemis-password --from-literal=password="${{ secrets.ARTEMIS_PASSWORD }}" --dry-run=client -o yaml | kubectl --kubeconfig=/tmp/k8s_config apply -f -
-          kubectl --kubeconfig=/tmp/k8s_config --namespace demos-main create secret generic faucet-mnemonic --from-literal=password="${{ secrets.FAUCET_MNEMONIC }}" --dry-run=client -o yaml | kubectl --kubeconfig=/tmp/k8s_config apply -f -
+          kubectl --kubeconfig=/tmp/k8s_config --namespace didcomm-chatbots create secret generic postgres-password --from-literal=password="${{ secrets.POSTGRES_PASSWORD }}" --dry-run=client -o yaml | kubectl --kubeconfig=/tmp/k8s_config apply -f -
+          kubectl --kubeconfig=/tmp/k8s_config --namespace didcomm-chatbots create secret generic artemis-password --from-literal=password="${{ secrets.ARTEMIS_PASSWORD }}" --dry-run=client -o yaml | kubectl --kubeconfig=/tmp/k8s_config apply -f -
+          kubectl --kubeconfig=/tmp/k8s_config --namespace didcomm-chatbots create secret generic faucet-mnemonic --from-literal=password="${{ secrets.FAUCET_MNEMONIC }}" --dry-run=client -o yaml | kubectl --kubeconfig=/tmp/k8s_config apply -f -
           kubectl --kubeconfig=/tmp/k8s_config apply -f k8s/testnet/namespace.yml
           kubectl --kubeconfig=/tmp/k8s_config apply -f k8s/testnet/deployment.yml
           kubectl --kubeconfig=/tmp/k8s_config patch -f k8s/testnet/deployment.yml -p "{\"spec\":{\"template\":{\"metadata\":{\"annotations\":{\"ci-last-updated\":\"$(date +'%s')\"}}}}}"
