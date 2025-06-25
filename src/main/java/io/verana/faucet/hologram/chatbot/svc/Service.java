@@ -74,6 +74,8 @@ public class Service {
 	@ConfigProperty(name = "io.twentysixty.demos.auth.debug")
 	Boolean debug;
 	
+	@ConfigProperty(name = "io.twentysixty.demos.auth.enabled")
+	Boolean authEnabled;
 	
 	@ConfigProperty(name = "io.twentysixty.demos.auth.credential_issuer")
 	String credentialIssuer;
@@ -184,8 +186,12 @@ public class Service {
 		
 		
 		mtProducer.sendMessage(this.getRootMenu(connectionId, null));
-		
-		mtProducer.sendMessage(this.getIdentityCredentialRequest(connectionId, null));
+		if (authEnabled) {
+			mtProducer.sendMessage(this.getIdentityCredentialRequest(connectionId, null));
+
+		} else {
+			mtProducer.sendMessage(TextMessage.build(connectionId, null , this.getMessage("USAGE")));
+		}
 		//entryPointCreate(connectionId, null, null);
 	}
 	
@@ -336,8 +342,6 @@ public class Service {
 		
 		Session session = this.getSession(message.getConnectionId());
 		
-		
-		
 		String content = null;
 
 		MediaMessage mm = null;
@@ -474,7 +478,7 @@ public class Service {
 
 			} 
 			
-			else if ((session != null) && (session.getAuthTs() != null)) {
+			else if ( (authEnabled &&   (session != null) && (session.getAuthTs() != null)) || (!authEnabled)) {
 				if (content.strip().startsWith(CMD_ROOT_MENU_TO.toString())) {
 					String[] data = content.split("\\s", 2);
 					String address = null;
@@ -580,7 +584,7 @@ public class Service {
 		List<ContextualMenuItem> options = new ArrayList<ContextualMenuItem>();
 		
 		
-		if ((session == null) || (session.getAuthTs() == null) ){
+		if ( authEnabled && ((session == null) || (session.getAuthTs() == null) )){
 			menu.setDescription(getMessage("ROOT_MENU_DEFAULT_DESCRIPTION"));
 			options.add(ContextualMenuItem.build(CMD_ROOT_MENU_AUTHENTICATE, getMessage("ROOT_MENU_AUTHENTICATE"), null));
 			if (ROOT_MENU_NO_CRED.isPresent()) {
@@ -606,7 +610,11 @@ public class Service {
 			}
 			
 			options.add(ContextualMenuItem.build(CMD_ROOT_MENU_OPTION1, ROOT_MENU_OPTION1, null));
-			options.add(ContextualMenuItem.build(CMD_ROOT_MENU_LOGOUT, this.getMessage("ROOT_MENU_LOGOUT"), null));
+			
+			if (authEnabled) {
+				options.add(ContextualMenuItem.build(CMD_ROOT_MENU_LOGOUT, this.getMessage("ROOT_MENU_LOGOUT"), null));
+
+			}
 			
 		}
 		
