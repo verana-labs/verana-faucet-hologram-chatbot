@@ -26,7 +26,7 @@ spec:
          containers:
          containers:
          -  name: verana-faucet-hologram-chatbot-sa-container
-            image: io2060/2060-service-agent:v1.1.0
+            image: io2060/vs-agent:v1.2
             imagePullPolicy: Always
             env:
             - name: AGENT_ENDPOINT
@@ -95,7 +95,7 @@ spec:
             - name: IO_TWENTYSIXTY_DEMOS_AUTH_ID_CREDENTIAL_DEF
               value: "did:web:avatar.demos.2060.io?service=anoncreds&relativeRef=/credDef/CfwLzNitet6352BenXKHj3FJpoNRvpTxcKcScFM8vH47"
             - name: IO_TWENTYSIXTY_DEMOS_AUTH_MESSAGES_WELCOME
-              value: "Welcome to the Verana Faucet. This service is for human only and denied to bots. You will have to prove you are not a bot by presenting an AvatarID."
+              value: "Write /to <verana address> to receive tokens, ie /to verana1vpgfweigfuyqgfgwqf78t4rgfkfwkhfkgWrite /to <verana address> to receive tokens, ie /to verana1vpgfweigfuyqgfgwqf78t4rgfkfwkhfkg."
             - name: IO_TWENTYSIXTY_DEMOS_AUTH_REQUEST_CITIZENID
               value: "0"
             - name: IO_TWENTYSIXTY_DEMOS_AUTH_REQUEST_FIRSTNAME
