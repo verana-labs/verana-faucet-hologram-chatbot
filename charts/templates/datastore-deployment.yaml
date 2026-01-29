@@ -1,0 +1,97 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: datastore-secret
+  namespace: {{ .Release.Namespace }}
+type: Opaque
+stringData:
+  {{- if .Values.datastore.secret }}
+  {{- range $key, $val := .Values.datastore.secret }}
+  {{ $key }}: {{ tpl $val $ | quote }}
+  {{- end }}
+  {{- else }}
+  {}
+  {{- end }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "chatbot.fullname" . }}-datastore
+  namespace: {{ .Release.Namespace }}
+spec:
+  type: {{ .Values.datastore.service.type }}
+  ports:
+    - name: http
+      port: {{ .Values.datastore.service.port }}
+      targetPort: http
+  selector:
+    app.kubernetes.io/component: datastore
+    {{- include "chatbot.selectorLabels" . | nindent 4 }}
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ include "chatbot.fullname" . }}-datastore
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app.kubernetes.io/component: datastore
+    {{- include "chatbot.labels" . | nindent 4 }}
+spec:
+  serviceName: {{ include "chatbot.fullname" . }}-datastore
+  replicas: {{ .Values.datastore.replicaCount }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/component: datastore
+      {{- include "chatbot.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/component: datastore
+        {{- include "chatbot.selectorLabels" . | nindent 8 }}
+    spec:
+      initContainers:
+        - name: volume-gid-ds
+          image: busybox
+          command:
+            - sh
+            - -c
+            - chown -R 185:0 /home/data
+          volumeMounts:
+            - name: pvc-{{ include "chatbot.fullname" . }}-datastore
+              mountPath: /home/data
+      containers:
+        - name: datastore-container
+          image: io2060/2060-datastore:main
+          imagePullPolicy: {{ .Values.datastore.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: {{ .Values.datastore.service.port }}
+          resources:
+            {{- toYaml .Values.datastore.resources | nindent 12 }}
+          env:
+            {{- range .Values.datastore.env }}
+            - name: {{ .name }}
+              value: {{ tpl .value $ | quote }}
+            {{- end }}
+            {{- range $key, $val := .Values.datastore.secret }}
+            - name: {{ $key }}
+              valueFrom:
+                secretKeyRef:
+                  name: datastore-secret
+                  key: {{ $key }}
+            {{- end }}
+          volumeMounts:
+            - name: pvc-{{ include "chatbot.fullname" . }}-datastore
+              mountPath: /home/data
+  volumeClaimTemplates:
+    - metadata:
+        name: pvc-{{ include "chatbot.fullname" . }}-datastore
+      spec:
+        {{- if .Values.datastore.storage.storageClassName }}
+        storageClassName: {{ .Values.datastore.storage.storageClassName }}
+        {{- end }}
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: {{ .Values.datastore.storage.size }}

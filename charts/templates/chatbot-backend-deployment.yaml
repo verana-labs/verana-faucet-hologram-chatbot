@@ -1,0 +1,104 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: chatbot-backend-secret
+  namespace: {{ .Release.Namespace }}
+type: Opaque
+stringData:
+  {{- if .Values.chatbotBackend.secret }}
+  {{- range $key, $val := .Values.chatbotBackend.secret }}
+  {{ $key }}: {{ tpl $val $ | quote }}
+  {{- end }}
+  {{- else }}
+  {}
+  {{- end }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "chatbot.fullname" . }}-chatbot-backend
+  namespace: {{ .Release.Namespace }}
+spec:
+  type: {{ .Values.chatbotBackend.service.type }}
+  ports:
+    - name: http
+      port: {{ .Values.chatbotBackend.service.port }}
+      targetPort: http
+  selector:
+    app.kubernetes.io/component: chatbot-backend
+    {{- include "chatbot.selectorLabels" . | nindent 4 }}
+{{- if .Values.chatbotBackend.ingress.enabled }}
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ include "chatbot.fullname" . }}-chatbot-backend-q
+  namespace: {{ .Release.Namespace }}
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+spec:
+  ingressClassName: {{ .Values.chatbotBackend.ingress.className }}
+  tls:
+    - hosts:
+        - {{ tpl .Values.chatbotBackend.ingress.host $ }}
+      secretName: {{ tpl .Values.chatbotBackend.ingress.tlsSecret $ }}
+  rules:
+    - host: {{ tpl .Values.chatbotBackend.ingress.host $ }}
+      http:
+        paths:
+          - path: {{ .Values.chatbotBackend.ingress.path }}
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ include "chatbot.fullname" . }}-chatbot-backend
+                port:
+                  number: {{ .Values.chatbotBackend.service.port }}
+{{- end }}
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ include "chatbot.fullname" . }}-chatbot-backend
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app.kubernetes.io/component: chatbot-backend
+    {{- include "chatbot.labels" . | nindent 4 }}
+spec:
+  serviceName: {{ include "chatbot.fullname" . }}-chatbot-backend
+  replicas: {{ .Values.chatbotBackend.replicaCount }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/component: chatbot-backend
+      {{- include "chatbot.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/component: chatbot-backend
+        {{- include "chatbot.selectorLabels" . | nindent 8 }}
+    spec:
+      containers:
+        - name: chatbot-backend-container
+          image: veranalabs/verana-faucet-hologram-chatbot:main
+          imagePullPolicy: {{ .Values.chatbotBackend.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: {{ .Values.chatbotBackend.service.port }}
+          resources:
+            {{- toYaml .Values.chatbotBackend.resources | nindent 12 }}
+          env:
+            {{- range .Values.chatbotBackend.env }}
+            - name: {{ .name }}
+              value: {{ tpl .value $ | quote }}
+            {{- end }}
+            - name: QUARKUS_DATASOURCE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-password
+                  key: password
+            {{- range $key, $val := .Values.chatbotBackend.secret }}
+            - name: {{ $key }}
+              valueFrom:
+                secretKeyRef:
+                  name: chatbot-backend-secret
+                  key: {{ $key }}
+            {{- end }}
