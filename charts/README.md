@@ -9,7 +9,6 @@ This Helm chart deploys the `verana-faucet-hologram-chatbot` stack and its Kuber
 - `datastore`
 - `faucet-app`
 - `postgres`
-- `stats`
 
 - The `vs-agent` component is deployed as a Helm dependency (`vs-agent-chart`) and configured entirely via `values.yaml`.
 
@@ -38,7 +37,6 @@ With that setting, resources render as:
 - `<nameOverride>-datastore`
 - `<nameOverride>-faucet-app`
 - `<nameOverride>-postgres`
-- `<nameOverride>-stats`
 
 ---
 
@@ -138,7 +136,6 @@ The following services are created by this chart (names depend on `nameOverride`
 - `{{ .Values.nameOverride }}-datastore`
 - `{{ .Values.nameOverride }}-faucet-app`
 - `{{ .Values.nameOverride }}-postgres`
-- `{{ .Values.nameOverride }}-stats`
 
 Internal envs are wired to these service names. Example: the backend points to
 `{{ .Values.nameOverride }}-vsa`, `{{ .Values.nameOverride }}-datastore`, and `{{ .Values.nameOverride }}-faucet-app`.
@@ -193,7 +190,6 @@ This subchart is fully configured via the `vs-agent-chart` section in `values.ya
 | AGENT_INVITATION_IMAGE_URL             | Image URL for invitations |
 | EVENTS_BASE_URL                        | Event receiver base URL   |
 | AGENT_PUBLIC_DID                       | Public DID                |
-| ANONCREDS_SERVICE_BASE_URL             | Anoncreds service URL     |
 | REDIRECT_DEFAULT_URL_TO_INVITATION_URL | Redirect control          |
 | ADMIN_PORT                             | Admin API port            |
 
@@ -230,21 +226,3 @@ This subchart is fully configured via the `vs-agent-chart` section in `values.ya
 | Env    | CHAIN_PREFIX   | Chain prefix            |
 | Env    | AMOUNT         | Faucet amount           |
 | Secret | FAUCET_MNEMONIC| Faucet wallet mnemonic  |
-
----
-
-### Stats
-
-| Source | Key                                         | Description                  |
-| ------ | ------------------------------------------- | ---------------------------- |
-| Env    | DEBUG                                       | Log level                    |
-| Env    | QUARKUS_HTTP_PORT                           | App port                     |
-| Env    | COM_MOBIERA_MS_COMMONS_STATS_JMS_QUEUE_NAME | Queue name                   |
-| Env    | COM_MOBIERA_MS_COMMONS_STATS_THREADS        | Number of processing threads |
-| Env    | COM_MOBIERA_MS_COMMONS_STATS_STANDALONE     | Run in standalone mode       |
-| Env    | QUARKUS_ARTEMIS_A0_URL                      | Artemis broker URL           |
-| Env    | QUARKUS_ARTEMIS_A0_USERNAME                 | Artemis username             |
-| Env    | QUARKUS_DATASOURCE_JDBC_URL                 | JDBC connection string       |
-| Env    | QUARKUS_DATASOURCE_USERNAME                 | DB user                      |
-| Secret | QUARKUS_DATASOURCE_PASSWORD                 | DB password                  |
-| Secret | QUARKUS_ARTEMIS_A0_PASSWORD                 | Artemis password             |

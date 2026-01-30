@@ -9,25 +9,23 @@ vs-agent-chart:
   name: 'verana-faucet-hologram-vsa'
   didcommLabel: Verana Faucet (Demo)
   eventsBaseUrl: http://verana-faucet-hologram-chatbot-backend:2903
-  didcommInvitationImageUrl: ttps://q.{{ .Values.global.host }}.{{ .Values.global.domain }}/avatar.png
+  didcommInvitationImageUrl: https://q.{{ .Values.global.host }}.{{ .Values.global.domain }}/avatar.png
   adminPort: 4000
   ingress:
     host: '{{ .Values.global.host }}.{{ .Values.global.domain }}'
     tlsSecret: 'public.{{ .Values.global.host }}.{{ .Values.global.domain }}-cert'
   database:
     enabled: false
-    host: localhost
-    user: example-db-user
-    pwd: example-db-password
   redis:
     enabled: false
+  storage:
+    size: 1Gi
+    storageClassName: csi-cinder-classic
   extraEnv:
     - name: AGENT_WALLET_ID
       value: 'verana-test-faucet-wallet'
     - name: AGENT_WALLET_KEY
       value: 'verana-test-faucet-wallet-d2iwuoge8u2'
-    - name: ANONCREDS_SERVICE_BASE_URL
-      value: 'https://{{ .Values.global.host }}.{{ .Values.global.domain }}'
     - name: AGENT_LOG_LEVEL
       value: "3"
     - name: USE_CORS
@@ -219,38 +217,3 @@ faucetApp:
   service:
     type: ClusterIP
     port: 3000
-
-stats:
-  enabled: true
-  replicaCount: 1
-  image:
-    pullPolicy: Always
-  env:
-    - name: DEBUG
-      value: '3'
-    - name: QUARKUS_HTTP_PORT
-      value: '8700'
-    - name: COM_MOBIERA_MS_COMMONS_STATS_JMS_QUEUE_NAME
-      value: 'example-agent-queue'
-    - name: COM_MOBIERA_MS_COMMONS_STATS_THREADS
-      value: '1'
-    - name: COM_MOBIERA_MS_COMMONS_STATS_STANDALONE
-      value: '1'
-    - name: QUARKUS_ARTEMIS_A0_URL
-      value: 'tcp://example-artemis.namespace.svc.cluster.local:61616'
-    - name: QUARKUS_ARTEMIS_A0_USERNAME
-      value: 'example-user'
-    - name: QUARKUS_DATASOURCE_JDBC_URL
-      value: 'jdbc:postgresql://{{ include "chatbot.fullname" . }}-postgres:{{ .Values.postgres.port }}/verana'
-    - name: QUARKUS_DATASOURCE_USERNAME
-      value: 'verana'
-  secret:
-    QUARKUS_ARTEMIS_A0_PASSWORD: 'example-artemis-password'
-    QUARKUS_DATASOURCE_PASSWORD: 'example-db-password'
-  service:
-    type: ClusterIP
-    port: 8700
-  ingress:
-    enabled: true
-    host: 'example-stats.{{.Values.global.domain}}'
-    tlsSecret: 'example-stats.{{.Values.global.domain}}'
