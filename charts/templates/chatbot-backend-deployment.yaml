@@ -78,8 +78,8 @@ spec:
     spec:
       containers:
         - name: chatbot-backend-container
-          image: {{ .Values.chatbotBackend.image.repository }}:{{ .Values.chatbotBackend.image.tag }}
-          imagePullPolicy: {{ .Values.chatbotBackend.image.pullPolicy }}
+          image: veranalabs/verana-faucet-hologram-chatbot:{{ .Chart.Version }}
+          imagePullPolicy: always
           ports:
             - name: http
               containerPort: {{ .Values.chatbotBackend.service.port }}

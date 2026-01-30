@@ -109,10 +109,6 @@ datastore:
 chatbotBackend:
   enabled: true
   replicaCount: 1
-  image:
-    repository: veranalabs/verana-faucet-hologram-chatbot
-    tag: main
-    pullPolicy: Always
   env:
     - name: DEBUG
       value: '1'
