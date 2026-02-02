@@ -13,7 +13,7 @@ Workflows:
 Artifacts:
 
 - Docker image: `docker.io/<DOCKER_HUB_LOGIN>/verana-faucet-hologram-chatbot`
-- Helm chart (OCI): `oci://registry-1.docker.io/<DOCKER_HUB_LOGIN>/verana-faucet-hologram-chatbot`
+- Helm chart (OCI): `oci://registry-1.docker.io/<DOCKER_HUB_LOGIN>/verana-faucet-hologram-chatbot-chart`
 
 ## Workflow: CI (`ci.yml`)
 
