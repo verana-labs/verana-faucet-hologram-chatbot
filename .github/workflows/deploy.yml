@@ -23,7 +23,7 @@ jobs:
         runs-on: ubuntu-latest
         env:
             IMAGE_REPO: ${{ secrets.DOCKER_HUB_LOGIN }}/verana-faucet-hologram-chatbot
-            CHART_REF: oci://registry-1.docker.io/${{ secrets.DOCKER_HUB_LOGIN }}/verana-faucet-hologram-chatbot
+            CHART_REF: oci://registry-1.docker.io/${{ secrets.DOCKER_HUB_LOGIN }}/verana-faucet-hologram-chatbot-chart
 
         steps:
             - name: Set up kubectl
