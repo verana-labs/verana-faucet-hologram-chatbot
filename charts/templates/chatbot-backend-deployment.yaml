@@ -78,7 +78,7 @@ spec:
     spec:
       containers:
         - name: chatbot-backend-container
-          image: veranalabs/verana-faucet-hologram-chatbot:{{ .Chart.Version }}
+          image: veranalabs/verana-faucet-hologram-chatbot:{{ .Values.chatbotBackend.image.tag | default .Chart.Version }}
           imagePullPolicy: always
           ports:
             - name: http

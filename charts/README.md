@@ -199,6 +199,8 @@ Below is a summary of the environment variables required by each component. All 
 | Secret | QUARKUS_DATASOURCE_PASSWORD | DB password                       |
 | Secret | QUARKUS_ARTEMIS_PASSWORD    | Artemis password                  |
 
+**Note:** The image tag should match the Chart version by default to ensure deployment consistency. It can be overridden for debugging purposes if needed.
+
 ---
 
 ### Vs-Agent (via `vs-agent-chart`)

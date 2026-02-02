@@ -110,6 +110,8 @@ datastore:
 chatbotBackend:
   enabled: true
   replicaCount: 1
+  image:
+    tag: ''
   env:
     - name: DEBUG
       value: '1'
