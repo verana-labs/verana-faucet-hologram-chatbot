@@ -1,6 +1,7 @@
 global:
-  domain: devnet.verana.network
-  host: test-faucet-vs
+  domain: testnet.verana.network
+  host: faucet-vs
+  rpcEndpoint: https://rpc.testnet.verana.network
 
 nameOverride: 'verana-faucet-hologram'
 
@@ -9,7 +10,7 @@ vs-agent-chart:
   name: 'verana-faucet-hologram-vsa'
   didcommLabel: Verana Faucet (Demo)
   eventsBaseUrl: http://verana-faucet-hologram-chatbot-backend:2903
-  didcommInvitationImageUrl: https://q.{{ .Values.global.host }}.{{ .Values.global.domain }}/avatar.png
+  didcommInvitationImageUrl: https://verana.io/logo.svg
   adminPort: 4000
   ingress:
     host: '{{ .Values.global.host }}.{{ .Values.global.domain }}'
@@ -57,7 +58,7 @@ postgres:
     - name: POSTGRES_DB
       value: 'verana'
   secret:
-    password: 'postgres-password'
+    password: ''
   resources:
     requests:
       cpu: '200m'
@@ -141,7 +142,7 @@ chatbotBackend:
     - name: IO_TWENTYSIXTY_DEMOS_AUTH_ID_CREDENTIAL_DEF
       value: 'did:web:avatar.demos.2060.io?service=anoncreds&relativeRef=/credDef/CfwLzNitet6352BenXKHj3FJpoNRvpTxcKcScFM8vH47'
     - name: IO_TWENTYSIXTY_DEMOS_AUTH_MESSAGES_WELCOME
-      value: 'Write /to <verana address> to receive tokens, ie /to verana1vpgfweigfuyqgfgwqf78t4rgfkfwkhfkgWrite /to <verana address> to receive tokens, ie /to verana1vpgfweigfuyqgfgwqf78t4rgfkfwkhfkg.'
+      value: 'Write /to <verana address> to receive tokens, ie /to verana1vpgfweigfuyqgfgwqf78t4rgfkfwkhfkg.'
     - name: IO_TWENTYSIXTY_DEMOS_AUTH_REQUEST_CITIZENID
       value: '0'
     - name: IO_TWENTYSIXTY_DEMOS_AUTH_REQUEST_FIRSTNAME
@@ -167,7 +168,7 @@ chatbotBackend:
     - name: QUARKUS_ARTEMIS_URL
       value: 'tcp://artemis-broker-hdls-svc.activemq-artemis-operator:61616'
   secret:
-    QUARKUS_ARTEMIS_PASSWORD: 'example-artemis-password'
+    QUARKUS_ARTEMIS_PASSWORD: ''
   resources:
     requests:
       cpu: '200m'
@@ -189,12 +190,14 @@ faucetApp:
   enabled: true
   replicaCount: 1
   image:
+    repository: veranalabs/faucet-app
+    tag: v1.3.2
     pullPolicy: Always
   env:
     - name: PORT
       value: '3000'
     - name: RPC_ENDPOINT
-      value: 'http://node1.testnet.verana.network:26657/'
+      value: '{{ .Values.global.rpcEndpoint }}'
     - name: DENOM
       value: 'uvna'
     - name: CHAIN_PREFIX
@@ -202,7 +205,7 @@ faucetApp:
     - name: AMOUNT
       value: '50000'
   secret:
-    FAUCET_MNEMONIC: 'example-faucet-mnemonic'
+    FAUCET_MNEMONIC: ''
   resources:
     requests:
       cpu: '100m'

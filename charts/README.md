@@ -13,6 +13,7 @@ This Helm chart deploys the `verana-faucet-hologram-chatbot` stack and its Kuber
 - The `vs-agent` component is deployed as a Helm dependency (`vs-agent-chart`) and configured entirely via `values.yaml`.
 
 - Ingress definitions are preconfigured and rely on a shared global domain + host setting.
+- RPC endpoint is centralized in `global.rpcEndpoint` for the faucet app.
 
 ---
 
@@ -86,6 +87,16 @@ Ensure the target namespace already exists:
 helm upgrade --install <release-name> ./charts/ --namespace <your-namespace>
 ```
 
+### 4.1 Install/Upgrade with custom values file
+
+Create a values file (for example `values-prod.yml`) and pass it to Helm:
+
+```bash
+helm upgrade --install <release-name> ./charts/ \
+  --namespace <your-namespace> \
+  -f values-prod.yml
+```
+
 > **Note:** `<release-name>` is a Helm release identifier. For example:
 
 ```bash
@@ -139,6 +150,17 @@ The following services are created by this chart (names depend on `nameOverride`
 
 Internal envs are wired to these service names. Example: the backend points to
 `{{ .Values.nameOverride }}-vsa`, `{{ .Values.nameOverride }}-datastore`, and `{{ .Values.nameOverride }}-faucet-app`.
+
+---
+
+## Global values
+
+```yaml
+global:
+  domain: testnet.verana.network
+  host: faucet-vs
+  rpcEndpoint: https://rpc.testnet.verana.network
+```
 
 ---
 
@@ -226,3 +248,8 @@ This subchart is fully configured via the `vs-agent-chart` section in `values.ya
 | Env    | CHAIN_PREFIX   | Chain prefix            |
 | Env    | AMOUNT         | Faucet amount           |
 | Secret | FAUCET_MNEMONIC| Faucet wallet mnemonic  |
+
+Notes:
+
+- Image is configurable via `faucetApp.image.repository`, `faucetApp.image.tag`, and `faucetApp.image.pullPolicy`.
+- Secrets default to empty strings and should be provided for real deployments.

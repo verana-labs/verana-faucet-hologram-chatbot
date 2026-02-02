@@ -51,7 +51,7 @@ spec:
     spec:
       containers:
         - name: faucet-app-container
-          image: veranalabs/faucet-app:latest
+          image: {{ .Values.faucetApp.image.repository }}:{{ .Values.faucetApp.image.tag }}
           imagePullPolicy: {{ .Values.faucetApp.image.pullPolicy }}
           ports:
             - name: http
