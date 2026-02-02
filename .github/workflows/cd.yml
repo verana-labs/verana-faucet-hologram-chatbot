@@ -131,7 +131,6 @@ jobs:
           CHART_NAME=$(grep '^name:' ./charts/Chart.yaml | awk '{print $2}')
 
           for tag in "${TAGS[@]}"; do
-            sed -i "s/^version:.*/version: ${tag}/" ./charts/Chart.yaml
             helm dependency update ./charts
             helm package ./charts --version $tag -d ./charts
             helm push "./charts/${CHART_NAME}-${tag}.tgz" "oci://docker.io/${{ secrets.DOCKER_HUB_LOGIN }}"
