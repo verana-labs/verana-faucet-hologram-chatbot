@@ -1,19 +1,4 @@
 apiVersion: v1
-kind: Secret
-metadata:
-  name: datastore-secret
-  namespace: {{ .Release.Namespace }}
-type: Opaque
-stringData:
-  {{- if .Values.datastore.secret }}
-  {{- range $key, $val := .Values.datastore.secret }}
-  {{ $key }}: {{ tpl $val $ | quote }}
-  {{- end }}
-  {{- else }}
-  {}
-  {{- end }}
----
-apiVersion: v1
 kind: Service
 metadata:
   name: {{ include "chatbot.fullname" . }}-datastore
@@ -72,13 +57,6 @@ spec:
             {{- range .Values.datastore.env }}
             - name: {{ .name }}
               value: {{ tpl .value $ | quote }}
-            {{- end }}
-            {{- range $key, $val := .Values.datastore.secret }}
-            - name: {{ $key }}
-              valueFrom:
-                secretKeyRef:
-                  name: datastore-secret
-                  key: {{ $key }}
             {{- end }}
           volumeMounts:
             - name: pvc-{{ include "chatbot.fullname" . }}-datastore

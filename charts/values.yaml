@@ -92,7 +92,6 @@ datastore:
       value: '/home/data/repo'
     - name: IO_TWENTYSIXTY_DATASTORE_MEDIA_MAXCHUNKS
       value: '128'
-  secret: {}
   resources:
     requests:
       cpu: '100m'
