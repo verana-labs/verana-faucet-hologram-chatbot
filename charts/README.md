@@ -189,17 +189,21 @@ Below is a summary of the environment variables required by each component. All 
 
 ### Chatbot Backend
 
-| Source | Key                         | Description                       |
-| ------ | ----------------------------| ----------------------------------|
-| Env    | QUARKUS_HTTP_PORT           | Backend HTTP port                 |
-| Env    | QUARKUS_DATASOURCE_USERNAME | DB user                           |
-| Env    | IO_TWENTYSIXTY_*            | DIDComm/Avatar auth settings      |
-| Env    | IO_VERANA_*                 | URLs to datastore/faucet services |
-| Env    | QUARKUS_ARTEMIS_URL         | Artemis broker URL                |
-| Secret | QUARKUS_DATASOURCE_PASSWORD | DB password                       |
-| Secret | QUARKUS_ARTEMIS_PASSWORD    | Artemis password                  |
+| Source | Key                         | Description                                   |
+| ------ | ----------------------------| ----------------------------------------------|
+| Env    | QUARKUS_HTTP_PORT           | Backend HTTP port                             |
+| Env    | QUARKUS_DATASOURCE_USERNAME | DB user                                       |
+| Env    | IO_TWENTYSIXTY_*            | DIDComm/Avatar auth settings                  |
+| Env    | IO_VERANA_*                 | URLs to datastore/faucet services             |
+| Env    | QUARKUS_ARTEMIS_URL         | Artemis broker URL                            |
+| Secret | QUARKUS_DATASOURCE_PASSWORD | DB password                                   |
+| Secret | QUARKUS_ARTEMIS_PASSWORD    | From secret `artemis-password` key `password` |
 
-**Note:** The image tag should match the Chart version by default to ensure deployment consistency. It can be overridden for debugging purposes if needed.
+Notes:
+
+- Image tag should match the Chart version by default; it can be overridden via `chatbotBackend.image.tag`.
+- Secret name/key follow the existing deployment (`artemis-password` / `password`).
+- You can enable/disable secret creation via `chatbotBackend.secret.enabled`. When enabled, it creates the `artemis-password` secret using `chatbotBackend.secret.password`.
 
 ---
 
@@ -225,7 +229,10 @@ This subchart is fully configured via the `vs-agent-chart` section in `values.ya
 | ------ | ----------------- | ------------------------ |
 | Env    | POSTGRES_USER     | Postgres DB user         |
 | Env    | POSTGRES_DB       | Name of the DB to create |
-| Secret | POSTGRES_PASSWORD | Postgres DB password     |
+| Secret | POSTGRES_PASSWORD | From secret `postgres-password` key `password` |
+
+Notes:
+- You can enable/disable secret creation via `postgres.secret.enabled`. When enabled, it creates the `postgres-password` secret using `postgres.secret.password`.
 
 ---
 
@@ -242,13 +249,13 @@ This subchart is fully configured via the `vs-agent-chart` section in `values.ya
 
 ### Faucet App
 
-| Source | Key            | Description             |
-| ------ | -------------- | ----------------------- |
-| Env    | PORT           | Service port            |
-| Env    | RPC_ENDPOINT   | Verana RPC endpoint     |
-| Env    | DENOM          | Token denom             |
-| Env    | CHAIN_PREFIX   | Chain prefix            |
-| Env    | AMOUNT         | Faucet amount           |
+| Source | Key            | Description                                  |
+| ------ | -------------- | ---------------------------------------------|
+| Env    | PORT           | Service port                                 |
+| Env    | RPC_ENDPOINT   | Verana RPC endpoint                          |
+| Env    | DENOM          | Token denom                                  |
+| Env    | CHAIN_PREFIX   | Chain prefix                                 |
+| Env    | AMOUNT         | Faucet amount                                |
 | Secret | FAUCET_MNEMONIC| From secret `faucet-mnemonic` key `password` |
 
 Notes:

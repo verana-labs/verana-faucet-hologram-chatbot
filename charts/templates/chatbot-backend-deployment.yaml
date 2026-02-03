@@ -1,18 +1,14 @@
+{{- if .Values.chatbotBackend.secret.enabled }}
 apiVersion: v1
 kind: Secret
 metadata:
-  name: chatbot-backend-secret
+  name: {{ .Values.chatbotBackend.secret.name }}
   namespace: {{ .Release.Namespace }}
 type: Opaque
 stringData:
-  {{- if .Values.chatbotBackend.secret }}
-  {{- range $key, $val := .Values.chatbotBackend.secret }}
-  {{ $key }}: {{ tpl $val $ | quote }}
-  {{- end }}
-  {{- else }}
-  {}
-  {{- end }}
+  password: {{ .Values.chatbotBackend.secret.password | quote }}
 ---
+{{- end }}
 apiVersion: v1
 kind: Service
 metadata:
@@ -95,10 +91,8 @@ spec:
                 secretKeyRef:
                   name: postgres-password
                   key: password
-            {{- range $key, $val := .Values.chatbotBackend.secret }}
-            - name: {{ $key }}
+            - name: QUARKUS_ARTEMIS_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: chatbot-backend-secret
-                  key: {{ $key }}
-            {{- end }}
+                  name: {{ .Values.chatbotBackend.secret.name }}
+                  key: password

@@ -58,6 +58,8 @@ postgres:
     - name: POSTGRES_DB
       value: 'verana'
   secret:
+    enabled: false
+    name: postgres-password
     password: ''
   resources:
     requests:
@@ -111,6 +113,10 @@ chatbotBackend:
   replicaCount: 1
   image:
     tag: ''
+  secret:
+    enabled: false
+    name: artemis-password
+    password: ''
   env:
     - name: DEBUG
       value: '1'
@@ -168,8 +174,6 @@ chatbotBackend:
       value: 'testnet-verana-faucet-hologram-chatbot-mt'
     - name: QUARKUS_ARTEMIS_URL
       value: 'tcp://artemis-broker-hdls-svc.activemq-artemis-operator:61616'
-  secret:
-    QUARKUS_ARTEMIS_PASSWORD: ''
   resources:
     requests:
       cpu: '200m'

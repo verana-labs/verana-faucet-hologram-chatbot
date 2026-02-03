@@ -1,12 +1,14 @@
+{{- if .Values.postgres.secret.enabled }}
 apiVersion: v1
 kind: Secret
 metadata:
-  name: postgres-password
+  name: {{ .Values.postgres.secret.name }}
   namespace: {{ .Release.Namespace }}
 type: Opaque
 stringData:
   password: {{ tpl .Values.postgres.secret.password $ | quote }}
 ---
+{{- end }}
 
 apiVersion: v1
 kind: Service
@@ -62,7 +64,7 @@ spec:
             - name: POSTGRES_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: postgres-password
+                  name: {{ .Values.postgres.secret.name }}
                   key: password
           volumeMounts:
             - name: pvc-{{ include "chatbot.fullname" . }}-postgres
