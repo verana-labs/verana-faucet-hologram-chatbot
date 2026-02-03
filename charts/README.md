@@ -249,9 +249,10 @@ This subchart is fully configured via the `vs-agent-chart` section in `values.ya
 | Env    | DENOM          | Token denom             |
 | Env    | CHAIN_PREFIX   | Chain prefix            |
 | Env    | AMOUNT         | Faucet amount           |
-| Secret | FAUCET_MNEMONIC| Faucet wallet mnemonic  |
+| Secret | FAUCET_MNEMONIC| From secret `faucet-mnemonic` key `password` |
 
 Notes:
 
 - Image is configurable via `faucetApp.image.repository`, `faucetApp.image.tag`, and `faucetApp.image.pullPolicy`.
-- Secrets default to empty strings and should be provided for real deployments.
+- Secret name/key follow the existing deployment (`faucet-mnemonic` / `password`).
+- You can enable/disable secret creation via `faucetApp.secret.enabled`. When enabled, it creates the `faucet-mnemonic` secret using `faucetApp.secret.password`. Default `false`

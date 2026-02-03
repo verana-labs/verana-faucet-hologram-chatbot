@@ -1,18 +1,14 @@
+{{- if .Values.faucetApp.secret.enabled }}
 apiVersion: v1
 kind: Secret
 metadata:
-  name: faucet-app-secret
+  name: {{ .Values.faucetApp.secret.name }}
   namespace: {{ .Release.Namespace }}
 type: Opaque
 stringData:
-  {{- if .Values.faucetApp.secret }}
-  {{- range $key, $val := .Values.faucetApp.secret }}
-  {{ $key }}: {{ tpl $val $ | quote }}
-  {{- end }}
-  {{- else }}
-  {}
-  {{- end }}
+  password: {{ .Values.faucetApp.secret.password | quote }}
 ---
+{{- end }}
 apiVersion: v1
 kind: Service
 metadata:
@@ -63,10 +59,8 @@ spec:
             - name: {{ .name }}
               value: {{ tpl .value $ | quote }}
             {{- end }}
-            {{- range $key, $val := .Values.faucetApp.secret }}
-            - name: {{ $key }}
+            - name: FAUCET_MNEMONIC
               valueFrom:
                 secretKeyRef:
-                  name: faucet-app-secret
-                  key: {{ $key }}
-            {{- end }}
+                  name: {{ .Values.faucetApp.secret.name }}
+                  key: password

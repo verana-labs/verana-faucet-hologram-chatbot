@@ -192,8 +192,12 @@ faucetApp:
   replicaCount: 1
   image:
     repository: veranalabs/faucet-app
-    tag: v1.3.2
+    tag: latest
     pullPolicy: Always
+  secret:
+    enabled: false
+    name: faucet-mnemonic
+    password: ''
   env:
     - name: PORT
       value: '3000'
@@ -205,8 +209,6 @@ faucetApp:
       value: 'verana'
     - name: AMOUNT
       value: '50000'
-  secret:
-    FAUCET_MNEMONIC: ''
   resources:
     requests:
       cpu: '100m'
