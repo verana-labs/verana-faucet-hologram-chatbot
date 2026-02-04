@@ -115,16 +115,12 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-
-          # Helm chart version must be semver WITHOUT leading 'v'
-          VERSION_NO_V="${RELEASE_VERSION#v}"
-
           if [ "$RELEASE_TYPE" = "stable" ]; then
-            TAGS=("${VERSION_NO_V}")
+            TAGS=("${RELEASE_VERSION}")
           else
             TAGS=(
               "${RELEASE_MAJOR}.${RELEASE_MINOR}.${RELEASE_PATCH:0:1}-dev"
-              "${VERSION_NO_V}"
+              "${RELEASE_VERSION}"
             )
           fi
 
