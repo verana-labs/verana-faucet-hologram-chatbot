@@ -1,0 +1,34 @@
+@startuml CI/CD Workflows
+title CI/CD Workflows
+
+actor Dev
+
+Dev -> GitHub: push / pull_request
+
+group CI (ci.yml)
+  GitHub -> "CI: lint" : trigger on PR/push\nmain, release/**
+  "CI: lint" -> "Checkout"
+  "CI: lint" -> "Setup JDK 17"
+  "CI: lint" -> "Maven compile"
+  "CI: lint" -> "Setup Helm"
+  "CI: lint" -> "Helm dependency build (best effort)"
+  "CI: lint" -> "Helm lint"
+end
+
+group CD (cd.yml)
+  GitHub -> "Resolve version" : trigger on push\nmain, release/**
+  "Resolve version" --> "Docker build/push" : if new-release-published
+  "Docker build/push" -> "Docker Hub" : push image tags
+  "Docker build/push" --> "Helm package/push" : after docker
+  "Helm package/push" -> "Docker Hub OCI" : push chart tgz
+end
+
+group Deploy (deploy.yml)
+  Dev -> GitHub: workflow_dispatch
+  GitHub -> "Deploy job"
+  "Deploy job" -> "Helm registry login"
+  "Deploy job" -> "Helm upgrade/install" : from OCI chart
+  "Deploy job" -> "Kubernetes cluster"
+end
+
+@enduml

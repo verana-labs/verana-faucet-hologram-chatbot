@@ -1,0 +1,66 @@
+{{- if .Values.faucetApp.secret.enabled }}
+apiVersion: v1
+kind: Secret
+metadata:
+  name: {{ .Values.faucetApp.secret.name }}
+  namespace: {{ .Release.Namespace }}
+type: Opaque
+stringData:
+  password: {{ .Values.faucetApp.secret.password | quote }}
+---
+{{- end }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "chatbot.fullname" . }}-faucet-app
+  namespace: {{ .Release.Namespace }}
+spec:
+  type: {{ .Values.faucetApp.service.type }}
+  ports:
+    - name: http
+      port: {{ .Values.faucetApp.service.port }}
+      targetPort: http
+  selector:
+    app.kubernetes.io/component: faucet-app
+    {{- include "chatbot.selectorLabels" . | nindent 4 }}
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ include "chatbot.fullname" . }}-faucet-app
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app.kubernetes.io/component: faucet-app
+    {{- include "chatbot.labels" . | nindent 4 }}
+spec:
+  serviceName: {{ include "chatbot.fullname" . }}-faucet-app
+  replicas: {{ .Values.faucetApp.replicaCount }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/component: faucet-app
+      {{- include "chatbot.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/component: faucet-app
+        {{- include "chatbot.selectorLabels" . | nindent 8 }}
+    spec:
+      containers:
+        - name: faucet-app-container
+          image: {{ .Values.faucetApp.image.repository }}:{{ .Values.faucetApp.image.tag }}
+          imagePullPolicy: {{ .Values.faucetApp.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: {{ .Values.faucetApp.service.port }}
+          resources:
+            {{- toYaml .Values.faucetApp.resources | nindent 12 }}
+          env:
+            {{- range .Values.faucetApp.env }}
+            - name: {{ .name }}
+              value: {{ tpl .value $ | quote }}
+            {{- end }}
+            - name: FAUCET_MNEMONIC
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.faucetApp.secret.name }}
+                  key: password
