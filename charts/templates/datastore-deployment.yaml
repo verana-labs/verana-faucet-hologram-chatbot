@@ -42,7 +42,7 @@ spec:
             - -c
             - chown -R 185:0 /home/data
           volumeMounts:
-            - name: pvc-{{ include "chatbot.fullname" . }}-datastore
+            - name: datastore-data
               mountPath: /home/data
       containers:
         - name: datastore-container

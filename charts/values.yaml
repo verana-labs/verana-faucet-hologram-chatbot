@@ -23,6 +23,8 @@ vs-agent-chart:
     size: 1Gi
     storageClassName: csi-cinder-classic
   extraEnv:
+    - name: ADMIN_PORT
+      value: '4000'
     - name: AGENT_WALLET_ID
       value: 'verana-test-faucet-wallet'
     - name: AGENT_WALLET_KEY
@@ -176,6 +178,8 @@ chatbotBackend:
       value: 'testnet-verana-faucet-hologram-chatbot-mt'
     - name: QUARKUS_ARTEMIS_URL
       value: 'tcp://artemis-broker-hdls-svc.activemq-artemis-operator:61616'
+    - name: QUARKUS_DATASOURCE_JDBC_URL
+      value: jdbc:postgresql://{{ include "chatbot.fullname" . }}-postgres:{{ .Values.postgres.port }}/verana
   resources:
     requests:
       cpu: '200m'
