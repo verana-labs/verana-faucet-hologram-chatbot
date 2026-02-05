@@ -67,17 +67,26 @@ spec:
                   name: {{ .Values.postgres.secret.name }}
                   key: password
           volumeMounts:
-            - name: pvc-{{ include "chatbot.fullname" . }}-postgres
+            - name: postgres-data
               mountPath: /var/lib/postgresql/data
-  volumeClaimTemplates:
-    - metadata:
-        name: pvc-{{ include "chatbot.fullname" . }}-postgres
-      spec:
-        {{- if .Values.postgres.storage.storageClassName }}
-        storageClassName: {{ .Values.postgres.storage.storageClassName }}
-        {{- end }}
-        accessModes:
-          - ReadWriteOnce
-        resources:
-          requests:
-            storage: {{ .Values.postgres.storage.size }}
+      volumes:
+        - name: postgres-data
+          persistentVolumeClaim:
+            claimName: {{ tpl .Values.postgres.storage.pvcName . }}
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ tpl .Values.postgres.storage.pvcName . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app: {{ include "chatbot.fullname" . }}
+  annotations:
+    helm.sh/resource-policy: keep
+spec:
+  accessModes:
+    - "ReadWriteOnce"
+  storageClassName: {{ .Values.postgres.storage.storageClassName | default "csi-cinder-classic" }}
+  resources:
+    requests:
+      storage: {{ .Values.postgres.storage.size | default "1Gi" }}

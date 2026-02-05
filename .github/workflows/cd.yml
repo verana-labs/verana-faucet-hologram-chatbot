@@ -119,7 +119,7 @@ jobs:
             TAGS=("${RELEASE_VERSION}")
           else
             TAGS=(
-              "${RELEASE_MAJOR}.${RELEASE_MINOR}.${RELEASE_PATCH:0:1}-dev"
+              "v${RELEASE_MAJOR}.${RELEASE_MINOR}.${RELEASE_PATCH:0:1}-dev"
               "${RELEASE_VERSION}"
             )
           fi

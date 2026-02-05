@@ -3,11 +3,11 @@ global:
   host: faucet-vs
   rpcEndpoint: https://rpc.testnet.verana.network
 
-nameOverride: 'verana-faucet-hologram'
+nameOverride: 'verana-faucet-hologram-chatbot'
 
 vs-agent-chart:
   enabled: true
-  name: 'verana-faucet-hologram-vsa'
+  name: 'verana-faucet-hologram-chatbot'
   didcommLabel: Verana Faucet (Demo)
   eventsBaseUrl: http://verana-faucet-hologram-chatbot-backend:2903
   didcommInvitationImageUrl: https://verana.io/logo.svg
@@ -69,6 +69,7 @@ postgres:
       cpu: '1000m'
       memory: '1024Mi'
   storage:
+    pvcName: '{{ include "chatbot.fullname" . }}-pg-pv-main'
     size: 1Gi
     storageClassName: 'csi-cinder-classic'
   service:
@@ -105,6 +106,7 @@ datastore:
     type: ClusterIP
     port: 2904
   storage:
+    pvcName: '{{ include "chatbot.fullname" . }}-data-store-main'
     size: 1Gi
     storageClassName: 'csi-cinder-classic'
 

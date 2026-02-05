@@ -59,17 +59,26 @@ spec:
               value: {{ tpl .value $ | quote }}
             {{- end }}
           volumeMounts:
-            - name: pvc-{{ include "chatbot.fullname" . }}-datastore
+            - name: datastore-data
               mountPath: /home/data
-  volumeClaimTemplates:
-    - metadata:
-        name: pvc-{{ include "chatbot.fullname" . }}-datastore
-      spec:
-        {{- if .Values.datastore.storage.storageClassName }}
-        storageClassName: {{ .Values.datastore.storage.storageClassName }}
-        {{- end }}
-        accessModes:
-          - ReadWriteOnce
-        resources:
-          requests:
-            storage: {{ .Values.datastore.storage.size }}
+      volumes:
+        - name: datastore-data
+          persistentVolumeClaim:
+            claimName: {{ tpl .Values.datastore.storage.pvcName . }}
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ tpl .Values.datastore.storage.pvcName . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app: {{ include "chatbot.fullname" . }}
+  annotations:
+    helm.sh/resource-policy: keep
+spec:
+  accessModes:
+    - "ReadWriteOnce"
+  storageClassName: {{ .Values.datastore.storage.storageClassName | default "csi-cinder-classic" }}
+  resources:
+    requests:
+      storage: {{ .Values.datastore.storage.size | default "1Gi" }}
