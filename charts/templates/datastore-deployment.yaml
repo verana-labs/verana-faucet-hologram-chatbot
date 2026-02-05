@@ -42,7 +42,7 @@ spec:
             - -c
             - chown -R 185:0 /home/data
           volumeMounts:
-            - name: {{ tpl .Values.datastore.storage.pvcName . }}
+            - name: datastore-data
               mountPath: /home/data
       containers:
         - name: datastore-container
