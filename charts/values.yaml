@@ -178,8 +178,6 @@ chatbotBackend:
       value: 'testnet-verana-faucet-hologram-chatbot-mt'
     - name: QUARKUS_ARTEMIS_URL
       value: 'tcp://artemis-broker-hdls-svc.activemq-artemis-operator:61616'
-    - name: QUARKUS_DATASOURCE_JDBC_URL
-      value: jdbc:postgresql://{{ include "chatbot.fullname" . }}-postgres:{{ .Values.postgres.port }}/verana
   resources:
     requests:
       cpu: '200m'
