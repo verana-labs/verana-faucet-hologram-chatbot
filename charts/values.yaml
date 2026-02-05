@@ -131,9 +131,9 @@ chatbotBackend:
     - name: IO_TWENTYSIXTY_DEMOS_AUTH_VISION_REDIRDOMAIN
       value: '{{ .Values.global.host }}.{{ .Values.global.domain }}'
     - name: IO_TWENTYSIXTY_SA_RES_C_MESSAGERESOURCE_MP_REST_URL
-      value: 'http://{{ .Values.nameOverride }}-vsa:4000'
+      value: 'http://{{ .Values.nameOverride }}:4000'
     - name: IO_TWENTYSIXTY_SA_RES_C_CREDENTIALTYPERESOURCE_MP_REST_URL
-      value: 'http://{{ .Values.nameOverride }}-vsa:4000'
+      value: 'http://{{ .Values.nameOverride }}:4000'
     - name: IO_VERANA_FAUCET_HOLOGRAM_CHATBOT_RES_C_MEDIARESOURCE_MP_REST_URL
       value: 'http://{{ include "chatbot.fullname" . }}-datastore:{{ .Values.datastore.service.port }}'
     - name: IO_VERANA_FAUCET_HOLOGRAM_CHATBOT_RES_C_FAUCETRESOURCE_MP_REST_URL
