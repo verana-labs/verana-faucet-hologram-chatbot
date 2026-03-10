@@ -194,7 +194,7 @@ chatbotBackend:
     enabled: true
     className: nginx
     host: 'q.{{ .Values.global.host }}.{{ .Values.global.domain }}'
-    tlsSecret: 'public.{{ .Values.global.host }}.{{ .Values.global.domain }}-cert'
+    tlsSecret: 'public.q.{{ .Values.global.host }}.{{ .Values.global.domain }}-cert'
     path: /avatar.png
 
 faucetApp:

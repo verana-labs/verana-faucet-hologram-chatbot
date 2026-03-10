@@ -169,6 +169,10 @@ global:
 The avatar image used by the VS Agent is served through a dedicated Ingress on
 `q.<host>.<domain>` and routes `/avatar.png` to the backend service.
 
+Because the chart renders the avatar host as a separate Ingress resource, it
+should use its own TLS secret by default unless you intentionally provision a
+single SAN certificate that covers both the main host and the `q.` host.
+
 Values:
 
 ```yaml
@@ -177,7 +181,7 @@ chatbotBackend:
     enabled: true
     className: nginx
     host: q.{{ .Values.global.host }}.{{ .Values.global.domain }}
-    tlsSecret: public.{{ .Values.global.host }}.{{ .Values.global.domain }}-cert
+    tlsSecret: public.q.{{ .Values.global.host }}.{{ .Values.global.domain }}-cert
     path: /avatar.png
 ```
 
