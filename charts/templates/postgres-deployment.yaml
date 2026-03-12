@@ -57,15 +57,14 @@ spec:
           resources:
             {{- toYaml .Values.postgres.resources | nindent 12 }}
           env:
-            {{- range .Values.postgres.env }}
-            - name: {{ .name }}
-              value: {{ .value | quote }}
-            {{- end }}
+{{- with .Values.postgres.env }}
+{{- toYaml . | nindent 12 }}
+{{- end }}
             - name: POSTGRES_PASSWORD
               valueFrom:
                 secretKeyRef:
                   name: {{ .Values.postgres.secret.name }}
-                  key: password
+                  key: {{ .Values.postgres.secret.existingSecretKey | default "password" }}
           volumeMounts:
             - name: postgres-data
               mountPath: /var/lib/postgresql/data

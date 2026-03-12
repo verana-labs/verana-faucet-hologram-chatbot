@@ -62,6 +62,7 @@ postgres:
   secret:
     enabled: false
     name: postgres-password
+    existingSecretKey: ''
     password: ''
   resources:
     requests:
@@ -120,6 +121,7 @@ chatbotBackend:
   secret:
     enabled: false
     name: artemis-password
+    existingSecretKey: ''
     password: ''
   env:
     - name: DEBUG
@@ -207,6 +209,7 @@ faucetApp:
   secret:
     enabled: false
     name: faucet-mnemonic
+    existingSecretKey: ''
     password: ''
   env:
     - name: PORT
