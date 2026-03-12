@@ -63,4 +63,4 @@ spec:
               valueFrom:
                 secretKeyRef:
                   name: {{ .Values.faucetApp.secret.name }}
-                  key: password
+                  key: {{ .Values.faucetApp.secret.existingSecretKey | default "password" }}

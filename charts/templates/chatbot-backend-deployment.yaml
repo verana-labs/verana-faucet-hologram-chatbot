@@ -75,7 +75,7 @@ spec:
       containers:
         - name: backend-container
           image: veranalabs/verana-faucet-hologram-chatbot:{{ .Values.chatbotBackend.image.tag | default .Chart.Version }}
-          imagePullPolicy: always
+          imagePullPolicy: Always
           ports:
             - name: http
               containerPort: {{ .Values.chatbotBackend.service.port }}
@@ -89,10 +89,10 @@ spec:
             - name: QUARKUS_DATASOURCE_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: postgres-password
-                  key: password
+                  name: {{ .Values.postgres.secret.name }}
+                  key: {{ .Values.postgres.secret.existingSecretKey | default "password" }}
             - name: QUARKUS_ARTEMIS_PASSWORD
               valueFrom:
                 secretKeyRef:
                   name: {{ .Values.chatbotBackend.secret.name }}
-                  key: password
+                  key: {{ .Values.chatbotBackend.secret.existingSecretKey | default "password" }}
